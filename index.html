@@ -1,50 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UPI Payment Flow</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
-    #qrCodeContainer {
-      margin-top: 20px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPI Payment</title>
 </head>
 <body>
+    <h1>Complete Your Payment</h1>
+    <p>Enter the amount you wish to pay:</p>
+    <input type="number" id="amount" placeholder="Enter Amount" />
+    <button id="payBtn">Pay Now</button>
 
-  <h1>Complete Your Payment</h1>
-  <button id="buyNowBtn">Buy Now</button>
-  <div id="qrCodeContainer"></div>
+    <script>
+        document.getElementById('payBtn').addEventListener('click', function() {
+            const amount = document.getElementById('amount').value;
+            
+            // Validate if the amount is entered
+            if(amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
 
-  <script>
-    document.getElementById("buyNowBtn").onclick = function() {
-      // Generate the UPI QR Code dynamically
-      generateUPIQRCode();
-    };
+            // Generate UPI payment link
+            const upiLink = `upi://pay?pa=kmadhesh1017@okicici&pn=Markart&mc=YourMerchantCode&tid=${Date.now()}&am=${amount}&cu=INR`;
 
-    function generateUPIQRCode() {
-      // Example of generating UPI QR code (replace with your actual UPI ID and details)
-      const upiID = "kmadhesh1017@okicici";  // Your UPI ID
-      const amount = 100; // Amount to be paid
-      const txnId = Date.now(); // Unique transaction ID
-      const url = `upi://pay?pa=${upiID}&pn=Markart&mc=0000&tid=${txnId}&tr=${txnId}&tn=Payment&am=${amount}&cu=INR`;
-
-      const qrCodeImage = document.createElement('img');
-      qrCodeImage.src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(url)}&size=200x200`;
-      document.getElementById("qrCodeContainer").innerHTML = ''; // Clear previous QR code
-      document.getElementById("qrCodeContainer").appendChild(qrCodeImage);
-
-      // Redirect user to a thank you page after payment (simulate this after payment)
-      // You can remove this part if using a callback
-      setTimeout(() => {
-        window.location.href = "/api/payment-success?status=success&txnId=" + txnId;  // Simulate a successful payment
-      }, 5000);  // Simulate payment completion after 5 seconds (replace with actual callback logic)
-    }
-  </script>
-
+            // Redirect user to UPI payment app
+            window.location.href = upiLink;
+            
+            // After a short delay, handle redirection (to simulate success/failure handling)
+            setTimeout(() => {
+                window.location.href = '/payment-failure.html';  // In case the user doesn't get redirected back after payment
+            }, 15000); // Delay for 15 seconds
+        });
+    </script>
 </body>
 </html>

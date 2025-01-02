@@ -22,7 +22,7 @@
             }
 
             // Generate UPI payment link
-            const upiLink = `upi://pay?pa=kmadhesh1017@okicici&pn=Markart&mc=YourMerchantCode&tid=${Date.now()}&am=${amount}&cu=INR`;
+            const upiLink = `upi://pay?pa=kmadhesh1017@okicici&pn=Markart&am=${amount}&cu=INR&tid=${Date.now()}`;
 
             // Redirect user to UPI payment app
             window.location.href = upiLink;

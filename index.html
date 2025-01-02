@@ -3,116 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>UPI Payment</title>
-  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+  <title>UPI Payment Flow</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      background-color: #f4f4f9;
+      margin: 20px;
     }
-    .container {
-      text-align: center;
-      padding: 20px;
-      border: 1px solid #ddd;
-      background: #fff;
-      border-radius: 10px;
-    }
-    input, button {
-      padding: 10px;
-      margin: 10px;
-    }
-    canvas {
+    #qrCodeContainer {
       margin-top: 20px;
-    }
-    #status {
-      margin-top: 20px;
-      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Pay with UPI</h1>
-    <label for="amount">Enter Amount:</label>
-    <input type="number" id="amount" placeholder="Enter amount" />
-    <button id="generate">Generate QR Code</button>
-    <canvas id="qrcode"></canvas>
-    <p id="status"></p>
-  </div>
+
+  <h1>Complete Your Payment</h1>
+  <button id="buyNowBtn">Buy Now</button>
+  <div id="qrCodeContainer"></div>
 
   <script>
-    const transactionId = `txn_${Date.now()}`; // Unique transaction ID
+    document.getElementById("buyNowBtn").onclick = function() {
+      // Generate the UPI QR Code dynamically
+      generateUPIQRCode();
+    };
 
-    document.getElementById("generate").addEventListener("click", async () => {
-      const amount = document.getElementById("amount").value;
-      const statusText = document.getElementById("status");
+    function generateUPIQRCode() {
+      // Example of generating UPI QR code (replace with your actual UPI ID and details)
+      const upiID = "kmadhesh1017@okicici";  // Your UPI ID
+      const amount = 100; // Amount to be paid
+      const txnId = Date.now(); // Unique transaction ID
+      const url = `upi://pay?pa=${upiID}&pn=Markart&mc=0000&tid=${txnId}&tr=${txnId}&tn=Payment&am=${amount}&cu=INR`;
 
-      if (!amount || amount <= 0) {
-        alert("Please enter a valid amount");
-        return;
-      }
+      const qrCodeImage = document.createElement('img');
+      qrCodeImage.src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(url)}&size=200x200`;
+      document.getElementById("qrCodeContainer").innerHTML = ''; // Clear previous QR code
+      document.getElementById("qrCodeContainer").appendChild(qrCodeImage);
 
-      try {
-        // Generate UPI link by calling backend API
-        const response = await fetch("/api/generate-upi", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount, transactionId }),
-        });
-
-        if (!response.ok) {
-          console.error("API Error:", response.status, response.statusText);
-          return;
-        }
-
-        const { upiUrl } = await response.json();
-        if (!upiUrl) {
-          console.error("UPI URL is empty");
-          return;
-        }
-
-        // Generate the QR code
-        const qr = new QRious({
-          element: document.getElementById("qrcode"),
-          value: upiUrl,
-          size: 200,
-        });
-
-        // Update status message
-        statusText.textContent = "Waiting for payment...";
-
-        // Start checking payment status
-        checkPaymentStatus();
-      } catch (error) {
-        console.error("Error generating QR code:", error);
-        statusText.textContent = "Error generating QR code";
-      }
-    });
-
-    // Function to check payment status
-    async function checkPaymentStatus() {
-      const statusText = document.getElementById("status");
-
-      const interval = setInterval(async () => {
-        try {
-          const response = await fetch(`/api/check-payment/${transactionId}`);
-          const { status } = await response.json();
-
-          if (status === "success") {
-            clearInterval(interval);
-            statusText.textContent = "Payment successful!";
-            window.location.href = "/success"; // Redirect to success page
-          }
-        } catch (error) {
-          console.error("Error checking payment status:", error);
-          statusText.textContent = "Error checking payment status";
-        }
-      }, 3000); // Check every 3 seconds
+      // Redirect user to a thank you page after payment (simulate this after payment)
+      // You can remove this part if using a callback
+      setTimeout(() => {
+        window.location.href = "/api/payment-success?status=success&txnId=" + txnId;  // Simulate a successful payment
+      }, 5000);  // Simulate payment completion after 5 seconds (replace with actual callback logic)
     }
   </script>
+
 </body>
 </html>

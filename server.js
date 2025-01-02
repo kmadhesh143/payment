@@ -5,14 +5,14 @@ const bodyParser = require("body-parser");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Mock database to track payment status (for simplicity)
+// Mock database to track payment status
 const payments = {};
 
 // Middleware
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-// Generate UPI URL
+// API to generate UPI QR code URL
 app.post("/api/generate-upi", (req, res) => {
   const { amount, transactionId } = req.body;
 
@@ -28,22 +28,20 @@ app.post("/api/generate-upi", (req, res) => {
   // Save transaction status as pending
   payments[transactionId] = { status: "pending" };
 
-  console.log(`Generated UPI URL for transaction ${transactionId}: ${upiUrl}`);
-
-  // Send the UPI URL
+  // Send the UPI URL to the frontend
   res.json({ upiUrl });
 });
 
-// Check Payment Status (mocking success after 5 seconds)
+// API to check payment status (mocked as success after 5 seconds)
 app.get("/api/check-payment/:transactionId", (req, res) => {
   const { transactionId } = req.params;
 
   // Mock payment success after 5 seconds
   setTimeout(() => {
     if (payments[transactionId]) {
-      payments[transactionId].status = "success";  // Mock successful payment
+      payments[transactionId].status = "success";
     }
-  }, 5000);  // Simulate payment status after 5 seconds
+  }, 5000); // Simulate payment after 5 seconds
 
   const payment = payments[transactionId];
   if (!payment) {
@@ -53,7 +51,7 @@ app.get("/api/check-payment/:transactionId", (req, res) => {
   res.json({ status: payment.status });
 });
 
-// Serve the static HTML file for frontend
+// Serve the HTML frontend
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });

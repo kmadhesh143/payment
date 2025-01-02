@@ -16,7 +16,17 @@ document.getElementById("generate").addEventListener("click", async () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ amount, transactionId }),
     });
+
+    if (!response.ok) {
+      console.error("API Error: ", response.status, response.statusText);
+      return;
+    }
+
     const { upiUrl } = await response.json();
+    if (!upiUrl) {
+      console.error("UPI URL is empty");
+      return;
+    }
 
     // Generate QR Code
     const qr = new QRious({
@@ -25,9 +35,14 @@ document.getElementById("generate").addEventListener("click", async () => {
       size: 200,
     });
 
+    if (!qr) {
+      console.error("QR Code generation failed");
+    }
+
     statusText.textContent = "Waiting for payment...";
     checkPaymentStatus();
   } catch (error) {
+    console.error("Error generating QR code:", error);
     statusText.textContent = "Error generating QR code";
   }
 });
@@ -47,6 +62,7 @@ async function checkPaymentStatus() {
         window.location.href = "/success"; // Redirect to success page
       }
     } catch (error) {
+      console.error("Error checking payment status:", error);
       statusText.textContent = "Error checking payment status";
     }
   }, 3000); // Check every 3 seconds

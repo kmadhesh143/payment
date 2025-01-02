@@ -10,7 +10,7 @@ document.getElementById("generate").addEventListener("click", async () => {
   }
 
   try {
-    // Generate UPI link
+    // Generate UPI link by calling backend API
     const response = await fetch("/api/generate-upi", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -18,7 +18,7 @@ document.getElementById("generate").addEventListener("click", async () => {
     });
 
     if (!response.ok) {
-      console.error("API Error: ", response.status, response.statusText);
+      console.error("API Error:", response.status, response.statusText);
       return;
     }
 
@@ -28,18 +28,17 @@ document.getElementById("generate").addEventListener("click", async () => {
       return;
     }
 
-    // Generate QR Code
+    // Generate the QR code
     const qr = new QRious({
       element: document.getElementById("qrcode"),
       value: upiUrl,
       size: 200,
     });
 
-    if (!qr) {
-      console.error("QR Code generation failed");
-    }
-
+    // Update status message
     statusText.textContent = "Waiting for payment...";
+
+    // Start checking payment status
     checkPaymentStatus();
   } catch (error) {
     console.error("Error generating QR code:", error);
@@ -47,7 +46,7 @@ document.getElementById("generate").addEventListener("click", async () => {
   }
 });
 
-// Polling to check payment status
+// Function to check payment status
 async function checkPaymentStatus() {
   const statusText = document.getElementById("status");
 
@@ -59,7 +58,7 @@ async function checkPaymentStatus() {
       if (status === "success") {
         clearInterval(interval);
         statusText.textContent = "Payment successful!";
-        window.location.href = "/success"; // Redirect to success page
+        window.location.href = "/success"; // Redirect to success page (you can modify this URL)
       }
     } catch (error) {
       console.error("Error checking payment status:", error);

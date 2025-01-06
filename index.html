@@ -3,35 +3,552 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UPI Payment</title>
-</head>
-<body>
-    <h1>Complete Your Payment</h1>
-    <p>Enter the amount you wish to pay:</p>
-    <input type="number" id="amount" placeholder="Enter Amount" />
-    <button id="payBtn">Pay Now</button>
+    <meta name="description" content="ShopIt - Your go-to online store for all your needs">
+    <meta name="keywords" content="e-commerce, online shopping, products, ShopIt">
+    <meta name="author" content="Madhesh">
+    <title>ShopIt</title>
+    <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-    <script>
-        document.getElementById('payBtn').addEventListener('click', function() {
-            const amount = document.getElementById('amount').value;
-            
-            // Validate if the amount is entered
-            if(amount <= 0) {
-                alert('Please enter a valid amount');
-                return;
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #6402AC;
+            padding: 10px 20px;
+            .navbar {
+    position: fixed; /* Fixes the navbar to the top */
+    top: 0; /* Aligns it to the top of the page */
+    left: 0;
+    right: 0;
+    background: white; /* Background color */
+    transition: top 0.3s; /* Smooth transition for hiding/showing */
+    z-index: 1000; /* Ensure it stays above other content */
+}
+        }
+
+        .logo img {
+            height: 70px;
+            align-items: center; /* Adjust logo size */
+        }
+
+        .search-container {
+            justify-content: space-between;
+            position: relative;
+            display: flex; /* Use flexbox for alignment */
+            align-items: center; 
+            align-content: center;/* Center items vertically */
+        }
+
+        .search-bar {
+            padding: 5px;
+            border: none;
+            color: #fff;
+            background-color: #6402AC;
+            border: 2px solid #fff;
+            border-radius: 20px;
+            display: none; 
+            height:40px;/* Initially hidden */
+            width: 500px; /* Default width for desktop */
+            transition: width 0.3s ease; /* Smooth transition for width */
+        }
+
+        .toggle-button {
+            background-color: transparent;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-left: 20px; /* Space between search icon and input */
+        }
+
+        .cart-icon  {
+            color: white;
+           /* Adjust cart icon size */
+            margin-left: 20px; /* Space between search bar and cart icon */
+            font-size: 1.5rem;
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column; /* Stack elements vertically */
+                align-items: flex-start; /* Align items to the start */
             }
 
-            // Generate UPI payment link
-            const upiLink = `upi://pay?pa=kmadhesh1017@okicici&pn=Markart&am=${amount}&cu=INR&tid=${Date.now()}`;
-
-            // Redirect user to UPI payment app
-            window.location.href = upiLink;
+            .search-container {
+                width: 100%; /* Full width for search container */
+                justify-content: space-between; /* Space out search input and button */
+                /* Margin for spacing */
+            }
+            .logo {
+                margin: 0 auto; /* Center the logo */
+            }
             
-            // After a short delay, handle redirection (to simulate success/failure handling)
-            setTimeout(() => {
-                window.location.href = '/payment-failure.html';  // In case the user doesn't get redirected back after payment
-            }, 15000); // Delay for 15 seconds
+
+            .search-bar {
+                width: 100%; /* Full width on mobile */
+                display: block; /* Keep hidden until toggled */
+            }
+        }
+
+        /* Desktop Styles */
+        @media (min-width: 769px) {
+            .search-bar {
+                display: block;
+                align-items: center; /* Show on desktop */
+            }
+        }
+
+
+
+
+        body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;    }
+    #product-list {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 20px;
+    justify-content: center;
+    gap: 20px; /* Space between cards */
+}
+
+.product-card {
+    position: relative;
+    background: linear-gradient(145deg, #ffffff, #f9f9f9);
+    border-radius: 20px;
+    width: 300px; /* Default width for larger screens */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.product-image {
+    text-align: center; /* Center-aligns the image */
+    height: 200px; /* Fixed height for images */
+    overflow: hidden; 
+    margin: 10px;/* Hides overflow for round images */
+}
+
+.product-image img {
+    margin: 10px;
+    display: inline-block; /* Aligns the image as an inline element */
+    max-width: 100%; /* Ensures image is responsive */
+    max-height: 100%; /* Ensures image does not exceed container */
+    object-fit: cover; /* Ensures images cover the area without distortion */
+    border-radius: 20px 20px 0 0; /* Rounds the top corners */
+    transition: transform 0.3s; /* Smooth zoom on hover */
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.1); /* Zoom effect on hover */
+}
+
+.product-info {
+    text-align: left;
+    padding: 20px;
+}
+
+.product-title {
+    text-align: left;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    margin: 10px 0;
+}
+
+.product-price {
+    text-align: center;
+    color: #ff5722;
+    font-size: 1.4rem;
+    margin: 10px 0;
+}
+
+.product-rating {
+    text-align: left;
+    color: #ffcc00;
+    margin: 5px 0;
+}
+
+.product-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+button {
+    flex: 1; /* Ensures the button takes up available space */
+    padding: 10px;
+    border: none;
+    border-radius: 30px; /* More rounded buttons */
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.buy-now {
+    background-color: #7FFF00;
+    color: #fff;
+    margin: 5px;
+}
+
+.add-to-cart {
+    background-color: #8A2BE2;
+    color: #fff;
+    margin: 5px;
+}
+
+.buy-now:hover,
+.add-to-cart:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+    .product-card {
+        width: calc(50% - 10px); /* Two items per row with a gap */
+    }
+
+    #product-list {
+        justify-content: space-between; /* Adjusts spacing for mobile */
+    }
+    .product-buttons {
+        flex-direction: column; /* Stack buttons vertically */
+        align-items: stretch; /* Make buttons full width */
+    }
+
+    button {
+        margin: 5px 0; /* Add margin between stacked buttons */
+    }
+    .product-title {
+        font-size: 1.3rem; /* Slightly smaller title */
+    }
+
+    .product-price {
+        font-size: 1.2rem; /* Slightly smaller price */
+    }
+}
+
+
+    .not-found {
+        text-align: center;
+        color: #ff0000;
+        font-size: 1.2rem;
+        margin-top: 20px;
+    }
+    .cart-icon {
+            position: relative;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -10px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 3px 7px;
+            font-size: 0.8rem;
+        }
+        .product-share {
+    font-size: 2rem; /* Keep this size for visibility */
+    color: #414141;
+    cursor: pointer;
+    transition: color 0.3s, transform 0.2s, box-shadow 0.2s; /* Add transition for shadow */
+    margin-left: 10px; /* Spacing */
+    background-color: #f0f0f0; /* Light background */
+    border-radius: 50%; /* Circular background */
+    padding: 10px; /* Padding for background */
+}
+
+.product-share:hover {
+    color: #000000; /* Change color on hover */
+    transform: scale(1.1); /* Slightly increase size */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Add shadow effect */
+}
+
+/* Optional Tooltip styling */
+.product-share::after {
+    content: 'Share'; /* Tooltip text */
+    position: absolute;
+    background-color: #333; /* Dark background for tooltip */
+    color: #fff; /* White text */
+    padding: 5px 10px;
+    border-radius: 5px;
+    white-space: nowrap;
+    bottom: 125%; /* Position above the icon */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    visibility: hidden; /* Hide initially */
+    transition: opacity 0.3s;
+    z-index: 1; /* Ensure it appears above other elements */
+}
+
+.product-share:hover::after {
+    opacity: 1; /* Show tooltip on hover */
+    visibility: visible; /* Make it visible */
+}
+
+/* Adjust the size of the share icon */
+.fa-share-alt {
+    font-size: 25px; /* Increase or decrease size */
+    color: #636363; /* Icon color */
+    cursor: pointer; /* Makes the cursor a pointer when hovering */
+    padding: 10px;
+    margin-right: 10px;
+    float: right;
+    transition: color 0.3s ease; /* Smooth hover transition */
+}
+
+/* Add hover effect to the share icon */
+.fa-share-alt:hover {
+    color: #000000; /* Change color on hover */
+    transform: scale(1.1); /* Slightly increase size on hover */
+}
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-image {
+    height: 130px; /* Adjust height based on how large you want the logo */
+    width: 210px;   /* Maintains the aspect ratio */
+    margin-right: 10px;
+    margin-left: 10px;
+    border-radius: 50%; /* Adds space between the logo and the text */
+}
+@media (max-width: 768px) {
+    .logo-image{width: auto;
+        height: 70px;
+   }
+    
+}
+.logo-img {
+    height: 50px; /* Adjust height based on how large you want the logo */
+    width: 100px;   /* Maintains the aspect ratio */
+    margin-right: 10px;
+    margin-left: 10px;
+    border-radius: 50%; /* Adds space between the logo and the text */
+}
+
+.logo b {
+    font-size: 1.5rem;
+    color: #333;
+    text-decoration: none;
+}
+.container1 {
+            overflow-x: auto; /* Enables horizontal scrolling */
+            white-space: nowrap; /* Prevents line breaks */
+            padding: 20px;
+            align-items: center;
+            border: 2px solid #ccc; /* Optional: Add a border to the container */
+        }
+
+        .image-list {
+            display: inline-flex; /* Displays images in a row */
+            flex-direction: column; /* Aligns items vertically in each column */
+            align-content: center; /* Centers text under each image */
+            margin-right: 20px; /* Space between items */
+        }
+
+        .image-list img {
+            width: 100px; /* Set the desired width */
+            height: 100px; 
+            text-align: center;/* Set the desired height */
+            border-radius: 50%; /* Makes the image circular */
+            object-fit: cover; /* Ensures the image covers the circular area */
+        }
+
+        .image-text {
+            margin-top: 5px; /* Space between image and text */
+            text-align: center; /* Center-aligns the text */
+        }
+        @media(max-width: 768px) {
+            .container {
+                height: 120px; /* Adjust height for smaller screens */
+            }
+
+            .image-list img {
+                width: 80px; /* Decrease image size for smaller screens */
+                height: 80px; /* Decrease height for smaller screens */
+            }
+
+            .image-text {
+                font-size: 10px; /* Smaller font size for text */
+            }
+        }
+
+
+
+
+
+        
+    </style>
+</head>
+<body>
+    <nav class="navbar" id="navbar" style="position: fixed; top: 0; left: 0; right: 0; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); z-index: 1000; transition: top 0.3s;">
+        <div class="logo">
+            <img src="c:\Users\admin\OneDrive\Desktop\shopit\20241021_180509.png" alt="Logo">
+        </div>
+        <div class="search-container">
+            <input type="search" placeholder="Search..." id="search-bar" class="search-bar">
+            <button id="toggle-search" class="toggle-button"><i class="fas fa-search"></i></button>
+            <div class="cart-icon" onclick="viewCart()">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-count" class="cart-count">0</span>
+            </div>
+        </div>
+    </nav>
+    <main style="padding-top: 80px; margin-top: 100px; height: 200vh; text-align: center;">
+        <div id="product-list"></div>
+        <div id="not-found" class="not-found" style="display:none;">No products found.</div>
+
+
+        <div class="qr-container" id="qr-container" style="display:none;">
+            <h3>Scan to Pay</h3>
+            <div id="qr-code"></div>
+            <p id="instructions"></p>
+        </div>
+
+       
+         
+        <!-- Page content goes here -->
+    </main>
+
+    <script>
+
+let lastScrollTop = 0;
+const navbar = document.getElementById("navbar");
+
+window.addEventListener("scroll", function() {
+    let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+    if (scrollTop > lastScrollTop) {
+        // Scrolling down
+        navbar.style.top = "-70px"; // Adjust this value according to your navbar height
+    } else {
+        // Scrolling up
+        navbar.style.top = "0";
+    }
+    lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
+});
+
+
+
+        document.getElementById('toggle-search').addEventListener('click', function() {
+            const searchBar = document.getElementById('search-bar');
+            if (searchBar.style.display === 'none' || searchBar.style.display === '') {
+                searchBar.style.display = 'block'; // Show the search bar
+                searchBar.focus(); // Focus on the search bar
+            } else {
+                searchBar.style.display = 'none'; // Hide the search bar
+            }
         });
+
+        const googleSheetURL = 'https://script.google.com/macros/s/AKfycbyHPTLTCFMnVP3tJzNa-i8o9n82aKeyRSW2HszLukJHbu6SLBI8aIv-Ys_iDWLfr1Qh/exec'; 
+
+        let products = []; // Store fetched products here
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+
+        function updateCartCount() {
+            const cartCountElement = document.getElementById('cart-count');
+            cartCountElement.innerText = cart.length; // Update the count
+        }
+
+        // Fetch products from Google Sheets
+        fetch(googleSheetURL)
+            .then(response => response.json())
+            .then(data => {
+                products = data; // Store products in the global variable
+                displayProducts(products); // Initially display all products
+            })
+            .catch(error => console.log('Error fetching data:', error));
+
+        function displayProducts(productList) {
+    const productContainer = document.getElementById('product-list');
+    const notFoundMessage = document.getElementById('not-found');
+    productContainer.innerHTML = ''; // Clear previous products
+
+    if (productList.length === 0) {
+        notFoundMessage.style.display = 'block'; // Show "not found" message
+    } else {
+        notFoundMessage.style.display = 'none'; // Hide "not found" message
+        productList.forEach(product => {
+            const productCard = `
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="${product.imageUrl}" alt="${product.name}">
+                        </div>
+                    <div class="product-info">
+                        <h4 class="product-title">${product.name}</h4>
+                        <div class="product-rating">
+                            ${'<i class="fas fa-star"></i>'.repeat(Math.floor(product.rating))} 
+                            ${product.rating % 1 ? '<i class="fas fa-star-half-alt"></i>' : ''}
+                            <span class="review-count">(${Math.floor(Math.random() * 100 + 50)} reviews)</span>
+                            <p class="product-price"> ₹ ${product.price}</p>
+                        
+                        </div>
+
+                        <p class="product-description">${product.description}</p>
+                        <div class="product-buttons">
+                             <button class="buy-now" onclick="window.location.href='order.html?name=${encodeURIComponent(product.name)}&price=${product.price}&image=${encodeURIComponent(product.imageUrl)}&description=${encodeURIComponent(product.description)}'">Buy Now</button>
+                            <button class="add-to-cart" onclick="addToCart('${product.name}', ${product.price}, '${product.imageUrl}', '${product.description}')">Add to Cart</button>
+                
+                            </div>
+                    </div>
+                </div>
+            `;
+            productContainer.innerHTML += productCard;
+        });
+    }
+    updateCartCount();
+}
+
+
+        function addToCart(name, price, imageUrl, description) {
+    const item = { name, price, imageUrl, description }; // Include imageUrl and description
+    cart.push(item); // Add item to cart
+    localStorage.setItem('cart', JSON.stringify(cart)); // Save cart to localStorage
+    updateCartCount(); // Update cart count in navbar
+}
+
+
+
+
+
+        function viewCart() {
+    window.location.href = 'viewcart.html'; // Redirect to viewcart.html
+}
+
+        // Search functionality
+        const searchInput = document.getElementById('search-bar');
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase();
+            const filteredProducts = products.filter(product => {
+                return (
+                    product.name.toLowerCase().includes(query) ||
+                    product.price.toString().includes(query) ||
+                    product.description.toLowerCase().includes(query)
+                );
+            });
+            displayProducts(filteredProducts);
+        });
+
     </script>
 </body>
 </html>
+
